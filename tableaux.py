@@ -10,6 +10,11 @@ letrasProposicionales = [chr(x) for x in range(97, 123)]
 listaInterpsVerdaderas = []
 # inicializa la lista de hojas
 listaHojas = []
+# inicializa los conectivos binarios notese que el conectivo binario SII no se 
+# usa pues P <-> Q es logicamente equivalente a P>Q Y Q>P
+letrasproposicionales = ['p','q','r','s']
+conectivosbinarios = ['Y','O','>','<->']
+negacion = ['-']
 
 ##############################################################################
 # Definición de objeto tree y funciones de árboles
@@ -37,9 +42,20 @@ def StringtoTree(A):
     # Input: A, lista de caracteres con una formula escrita en notacion polaca inversa
              # letrasProposicionales, lista de letras proposicionales
     # Output: formula como tree
-
-	# OJO: DEBE INCLUIR SU CÓDIGO DE STRING2TREE EN ESTA PARTE!!!!!
-
+    pila = []
+    for c in A:
+        if c in letrasProposicionales:
+            pila.append(Tree(c, None, None))
+        elif c == '-':
+            formulaAux = Tree(c, None, pila[-1])
+            del pila[-1]
+            pila.append(formulaAux)
+        elif c in conectivos:
+            formulaAux = Tree(c, pila[-1], pila[-2])
+            del pila[-1]
+            del pila[-1]
+            pila.append(formulaAux)
+            return pila[-1]
 	p = letrasProposicionales[0] # ELIMINE ESTA LINEA LUEGO DE INCLUIR EL CODIGO DE STRING2TREE
 	return Tree(p, None, None) # ELIMINE ESTA LINEA LUEGO DE INCLUIR EL CODIGO DE STRING2TREE
 
