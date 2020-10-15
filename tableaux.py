@@ -185,8 +185,8 @@ def clasifica_y_extiende(f, h):
 		aux = [x for x in h if x != f] + [f.left] + [f.right]
 		listaHojas.remove(h)
 		listaHojas.append(aux)
-    elif clase == 'Alfa3':
-        au = [x for x in h if x != f] + 
+    	elif clase == 'Alfa3':
+        aux = [x for x in h if x != f] + 
 	# Aqui el resto de casos
 
 def Tableaux(f):
