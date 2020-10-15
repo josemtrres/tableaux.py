@@ -178,34 +178,34 @@ def clasifica_y_extiende(f, h):
 	assert(clase != None), "Formula incorrecta " + imprime_hoja(h)
 
 	if clase == 'Alfa1':
-	aux = [x for x in h if x != f] + [f.right.right]
-	listaHojas.remove(h)
-	listaHojas.append(aux)
+		aux = [x for x in h if x != f] + [f.right.right]
+		listaHojas.remove(h)
+		listaHojas.append(aux)
 	
 	elif clase == 'Alfa2':
-	aux = [x for x in h if x != f] + [f.left] + [f.right]
-	listaHojas.remove(h)
-	listaHojas.append(aux)
+		aux = [x for x in h if x != f] + [f.left] + [f.right]
+		listaHojas.remove(h)
+		listaHojas.append(aux)
 	
     	elif clase == 'Alfa3':
-        aux = [x for x in h if x != f] + ["-"+ [f.left]] + ["-" + [f.right]]
-        listaHojas.remove(h)
-	listaHojas.append(aux)
+        	aux = [x for x in h if x != f] + ["-"+ [f.left]] + ["-" + [f.right]]
+        	listaHojas.remove(h)
+		listaHojas.append(aux)
         
     	elif clase == "Beta1":
-        aux = [x for x in h if x != f] + ["-"+ [f.left]] + [x for x in h if x != f] + ["-" + [f.right]]
-        listaHojas.remove(h)
-	listaHojas.append(aux)
+        	aux = [x for x in h if x != f] + ["-"+ [f.left]] + [x for x in h if x != f] + ["-" + [f.right]]
+        	listaHojas.remove(h)
+		listaHojas.append(aux)
 	
     	elif clase == "Beta2":
-        aux = [x for x in h if x != f] + [f.left] + [x for x in h if x != f] + [f.right]
-        listaHojas.remove(h)
-	listaHojas.append(aux)
+        	aux = [x for x in h if x != f] + [f.left] + [x for x in h if x != f] + [f.right]
+        	listaHojas.remove(h)
+		listaHojas.append(aux)
 	
     	elif clase == "Beta3":
-        aux = [x for x in h if x != f] + ["-" + [f.left]] + [x for x in h if x != f] + [f.right]
-        listaHojas.remove(h)
-	listaHojas.append(aux)
+        	aux = [x for x in h if x != f] + ["-" + [f.left]] + [x for x in h if x != f] + [f.right]
+        	listaHojas.remove(h)
+		listaHojas.append(aux)
 
 def Tableaux(f):
 
