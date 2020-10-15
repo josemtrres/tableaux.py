@@ -14,8 +14,7 @@ listaHojas = []
 # usa pues P <-> Q es logicamente equivalente a P>Q Y Q>P
 conectivosbinarios = ['Y','O','>']
 negacion = ['-']
-I = []
-aux = {}
+
 ##############################################################################
 # Definición de objeto tree y funciones de árboles
 ##############################################################################
@@ -36,35 +35,6 @@ def Inorder(f):
 		return f.label + Inorder(f.right)
 	else:
 		return "(" + Inorder(f.left) + f.label + Inorder(f.right) + ")"
-
-for a in letrasproposicionales:
-    aux[a] = 1
-I.append(aux)
-
-for a in letrasProposicionales:
-    I_aux = [i for i in I]
-    for i in I_aux:
-        aux1 = {}
-        for b in letrasProposicionales:
-            if a == b:
-                aux1[b] = 1 - i[b]
-            else:
-                aux1[b] = i[b]
-        I.append(aux1)
-    
-def VI(f,I):
-    if f.label in letrasProposicionales:
-        return I[f.label]
-    if f.label in negacion:
-        return (1-VI(f.right, I))
-    if f.label  == 'Y':
-        return (VI(f.left, I)* VI(f.right, I))
-    if f.label == 'O':
-        return max((VI(f.left, I), VI(f.right, I)))
-    if f.label == '>':
-        return max(1-VI(f.left,I), VI(f.right,I))
-    if f.label == '<->':
-        return 1-pow((VI(f.left, I) - VI(f.right)), 2)
     
 def StringtoTree(A):
     # Crea una formula como tree dada una formula como cadena escrita en notacion polaca inversa
@@ -110,25 +80,25 @@ def par_complementario(l):
 	return False
 
 def es_literal(f):
-	# Esta función determina si el árbol f es un literal
-	# Input: f, una fórmula como árbol
-	# Output: True/False
+
     if f.label in letrasProposicionales:
         return True
     if f.label in negacion:
-        return True
+        if f.right.label in negacion:
+            return False
+        else:
+            return es_literal(f.right)
     elif f.label in conectivosbinarios:
         return False
 
 def no_literales(l):
-	# Esta función determina si una lista de fórmulas contiene
-	# solo literales
-	# Input: l, una lista de fórmulas como árboles
-	# Output: None/f, tal que f no es literal
-    for c in l:
-        if c in conectivosbinarios:
-            print("None/f, tal que f no es literal")
-	
+    for h in l:
+        if es_literal(h) == False:
+            return True
+        else:
+            pass
+    return True 
+               
 
 def clasifica_y_extiende(f):
 	# clasifica una fórmula como alfa o beta y extiende listaHojas
@@ -136,17 +106,18 @@ def clasifica_y_extiende(f):
 	# Input: f, una fórmula como árbol
 	# Output: no tiene output, pues modifica la variable global listaHojas
 	global listaHojas
-
+    
 def Tableaux(f):
 
-	# Algoritmo de creacion de tableau a partir de lista_hojas
-	# Input: - f, una fórmula como string en notación polaca inversa
-	# Output: interpretaciones: lista de listas de literales que hacen
-	#		 verdadera a f
-	global listaHojas
-	global listaInterpsVerdaderas
+    # Algoritmo de creacion de tableau a partir de lista_hojas
+    # Imput: - f, una fórmula como string en notación polaca inversa
+    # Output: interpretaciones: lista de listas de literales que hacen
+    #         verdadera a f
+    global listaHojas
+    global listaInterpsVerdaderas
 
-	A = StringtoTree(f)
-	listaHojas = [[A]]
+    A = StringtoTree(f)
+    listaHojas = [[A]]
 
-	return listaInterpsVerdaderas
+    return listaInterpsVerdaderas
+
