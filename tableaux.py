@@ -1,4 +1,11 @@
-#-*-coding: utf-8-*-
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 15 12:08:25 2020
+
+@author: ACER
+"""
+
+
 from random import choice
 ##############################################################################
 # Variables globales
@@ -29,13 +36,13 @@ def Inorder(f):
     # Imprime una formula como cadena dada una formula como arbol
     # Input: tree, que es una formula de logica proposicional
     # Output: string de la formula
-	if f.right == None:
-		return f.label
-	elif f.label == '-':
-		return f.label + Inorder(f.right)
-	else:
-		return "(" + Inorder(f.left) + f.label + Inorder(f.right) + ")"
-    
+    if (f.right == None):
+        return f.label
+    elif f.label == '-':
+        return f.label + Inorder(f.right)
+    else:
+        return "(" + Inorder(f.left) + f.label + Inorder(f.right) + ")"
+
 def StringtoTree(A):
     # Crea una formula como tree dada una formula como cadena escrita en notacion polaca inversa
     # Input: A, lista de caracteres con una formula escrita en notacion polaca inversa
@@ -94,32 +101,27 @@ def imprime_listaHojas(L):
 		print(imprime_hoja(h))
 
 def complemento(l):
-    # Esta función devuelve el complemento de un literal
-    # Input: l, un literal
-    # Output: x, un literal
-    if l[0] in conectivosbinarios:
-        pass
-    elif l[0] in negacion:
-        a = Tree(l[1],None,None)
+	# Esta función devuelve el complemento de un literal
+	# Input: l, un literal
+	# Output: x, un literal
+    if (l.label == '-'):
+        return l.right
     else:
-        a = Tree('-',None,Tree(l,None,None))
-    return a
+        return Tree('-',None,l)
+
 
 def par_complementario(l):
+	# Esta función determina si una lista de solo literales
+	# contiene un par complementario
+	# Input: l, una lista de literales
+	# Output: True/False
     for i in l:
-        if i.label in conectivosbinarios:
-            pass
-        elif i.label in negacion:
-            if i.right.label in negacion:
-                pass
-            else:
-                a = i.right.label
-                if complemento(a) in l:
-                    return True
-        else:
-            a = i.label
-            if complemento(a) in l:
-                return True
+        indices = [x for x in l if x != i]
+        for j in indices:
+            if (Inorder(i) == Inorder(complemento(j))):
+                return
+            
+        
 
 def es_literal(f):
     # Esta función determina si el árbol f es un literal
@@ -144,8 +146,8 @@ def no_literales(l):
     return False 
                
 def clasificacion(f):
-    if f.label in negacion:
-        if f.right.label in negacion:
+    if f.label == '-':
+        if f.right.label in negacion or f.right.left == None:
             return 'Alfa1'
         elif f.right.label == 'O':
             return 'Alfa3'
@@ -161,81 +163,77 @@ def clasificacion(f):
         return 'Beta3'
     
 def clasifica_y_extiende(f, h):
-	# Extiende listaHojas de acuerdo a la regla respectiva
-	# Input: f, una fórmula como árbol
-	# 		 h, una hoja (lista de fórmulas como árboles)
-	# Output: no tiene output, pues modifica la variable global listaHojas
 
-	global listaHojas
+    global listaHojas
 
-	print("Formula:", Inorder(f))
-	print("Hoja:", imprime_hoja(h))
+    print("Formula:", Inorder(f))
+    print("Hoja:", imprime_hoja(h))
 
-	assert(f in h), "La formula no esta en la lista!"
+    assert(f in h), "La formula no esta en la lista!"
 
-	clase = clasificacion(f)
-	print("Clasificada como:", clase)
-	assert(clase != None), "Formula incorrecta " + imprime_hoja(h)
+    clase = clasificacion(f)
+    print("Clasificada como:", clase)
+    assert(clase != None), "Formula incorrecta " + imprime_hoja(h)
 
-	if clase == 'Alfa1':
-		aux = [x for x in h if x != f] + [f.right.right]
-		listaHojas.remove(h)
-		listaHojas.append(aux)
-	
-	elif clase == 'Alfa2':
-		aux = [x for x in h if x != f] + [f.left] + [f.right]
-		listaHojas.remove(h)
-		listaHojas.append(aux)
-	
-    	elif clase == 'Alfa3':
-        	aux = [x for x in h if x != f] + ["-"+ [f.left]] + ["-" + [f.right]]
-        	listaHojas.remove(h)
-		listaHojas.append(aux)
+    if clase == 'Alfa1':
+         aux = [x for x in h if x != f] + [f.right.right]
+         listaHojas.remove(h)
+         listaHojas.append(aux)
+ 	
+    elif clase == 'Alfa2':
+          aux = [x for x in h if x != f] + [f.left] + [f.right]
+          listaHojas.remove(h)
+          listaHojas.append(aux)
+    elif clase == '3alfa':
+        aux = [x for x in h if x!=f] + [Tree('-', None, f.right.right), Tree('-', None, f.right.left)]
+        listaHojas.remove(h)
+        listaHojas.append(aux)
         
-    	elif clase == "Beta1":
-        	aux = [x for x in h if x != f] + ["-"+ [f.left]] + [x for x in h if x != f] + ["-" + [f.right]]
-        	listaHojas.remove(h)
-		listaHojas.append(aux)
-	
-    	elif clase == "Beta2":
-        	aux = [x for x in h if x != f] + [f.left] + [x for x in h if x != f] + [f.right]
-        	listaHojas.remove(h)
-		listaHojas.append(aux)
-	
-    	elif clase == "Beta3":
-        	aux = [x for x in h if x != f] + ["-" + [f.left]] + [x for x in h if x != f] + [f.right]
-        	listaHojas.remove(h)
-		listaHojas.append(aux)
+    elif clase == "Beta1":
+        aux1 = [x for x in h if x!=f] + [Tree('-', None, f.right.right)]
+        aux2 = [x for x in h if x!=f] + [Tree('-', None, f.right.left)]
+        listaHojas.remove(h)
+        listaHojas.append(aux1)
+        listaHojas.append(aux2)
+    elif clase == "Beta2":
+        aux = [x for x in h if x != f] + [f.left] + [x for x in h if x != f] + [f.right]
+        listaHojas.remove(h)
+        listaHojas.append(aux)
+ 	
+    elif clase == "Beta3":
+        aux = [x for x in h if x != f] + ["-" + [f.left]] + [x for x in h if x != f] + [f.right]
+        listaHojas.remove(h)
+        listaHojas.append(aux)
 
 def Tableaux(f):
 
-	# Algoritmo de creacion de tableau a partir de lista_hojas
-	# Imput: - f, una fórmula como string en notación polaca inversa
-	# Output: interpretaciones: lista de listas de literales que hacen
-	#		 verdadera a f
+ 	# Algoritmo de creacion de tableau a partir de lista_hojas
+ 	# Imput: - f, una fórmula como string en notación polaca inversa
+ 	# Output: interpretaciones: lista de listas de literales que hacen
+ 	#		 verdadera a f
 
-	global listaHojas
-	global listaInterpsVerdaderas
+ 	global listaHojas
+ 	global listaInterpsVerdaderas
 
-	A = StringtoTree(f)
-	print(u'La fórmula introducida es:\n', Inorder(A))
+ 	A = StringtoTree(f)
+ 	print(u'La fórmula introducida es:\n', Inorder(A))
 
-	listaHojas = [[A]]
+ 	listaHojas = [[A]]
 
-	while (len(listaHojas) > 0):
-		h = choice(listaHojas)
-		print("Trabajando con hoja:\n", imprime_hoja(h))
-		x = no_literales(h)
-		if x == None:
-			if par_complementario(h):
-				listaHojas.remove(h)
-			else:
-				listaInterpsVerdaderas.append(h)
-				listaHojas.remove(h)
-		else:
-			clasifica_y_extiende(x, h)
+ 	while (len(listaHojas) > 0):
+         h = choice(listaHojas)
+         print("Trabajando con hoja:\n", imprime_hoja(h))
+         x = no_literales(h)
+         if x == None:
+             if par_complementario(h):
+                 listaHojas.remove(h)
+             else:
+                 listaInterpsVerdaderas.append(h)
+                 listaHojas.remove(h)
+         else:
+             clasifica_y_extiende(x, h)
 
-	return listaInterpsVerdaderas
+ 	return listaInterpsVerdaderas
 
 
 f = Inorder2Tree('-(rYs)')
